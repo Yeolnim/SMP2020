@@ -7,12 +7,13 @@ from keras.models import load_model
 from keras import backend as K
 from keras.engine.topology import Layer
 
+
 class AttentionLayer(Layer):
     def __init__(self, **kwargs):
-        super(AttentionLayer, self).__init__(** kwargs)
+        super(AttentionLayer, self).__init__(**kwargs)
 
     def build(self, input_shape):
-        assert len(input_shape)==3
+        assert len(input_shape) == 3
         # W.shape = (time_steps, time_steps)
         self.W = self.add_weight(name='att_weight',
                                  shape=(input_shape[1], input_shape[1]),
@@ -36,9 +37,10 @@ class AttentionLayer(Layer):
     def compute_output_shape(self, input_shape):
         return input_shape[0], input_shape[2]
 
-a=AttentionLayer()
 
-model = load_model('./model/bert_att.h5',custom_objects={'AttentionLayer': a})
+a = AttentionLayer()
+
+model = load_model('./model/bert_att.h5', custom_objects={'AttentionLayer': a})
 
 train = pd.read_csv('./data/train.csv')
 test = pd.read_csv('./data/virus_test.csv')
@@ -72,14 +74,13 @@ print("完成！")
 
 predicted = np.array(model.predict(X_test))
 print(predicted)
-test_predicted=np.argmax(predicted,axis=1)
+test_predicted = np.argmax(predicted, axis=1)
 
-test['label']=test_predicted
-test['id']=test['数据编号']
+test['label'] = test_predicted
+test['id'] = test['数据编号']
 
-test['label'].replace({0:'angry', 1:'fear',2:'happy',3:'neural',4:'sad',5:'surprise'}, inplace=True)
+test['label'].replace({0: 'angry', 1: 'fear', 2: 'happy', 3: 'neural', 4: 'sad', 5: 'surprise'}, inplace=True)
 
-
-order=['id','label']
+order = ['id', 'label']
 result = test[order]
-result.to_csv('./result/virus_result.csv', encoding='utf-8',index=False)
+result.to_csv('./result/virus_result.csv', encoding='utf-8', index=False)
